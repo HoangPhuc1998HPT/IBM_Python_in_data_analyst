@@ -1,79 +1,80 @@
-from datetime import datetime
 import pandas as pd
 
-# Define start and end dates for the plan
-start_date = datetime(2025, 1, 23)
-end_date = datetime(2025, 2, 28)
+# Dữ liệu lịch học được chỉnh sửa với các số trang chính xác
+corrected_practices = [
+    # Test 1
+    ("Listening Section 1 (Page 1-2)", "Reading Passage 1 (Page 20-21)"),
+    ("Writing Task 1 (Page 22)", "Reading Passage 2 (Page 23-25)"),
+    ("Listening Section 2 (Page 3-4)", "Speaking Part 1 (Page 26-27)"),
+    ("Listening Section 3 (Page 5-6)", "Reading Passage 3 (Page 28-29)"),
+    ("Mock Listening Test (Page 7-8)", "Mock Reading Test (Page 30-31)"),
+    ("Writing Task 2 (Page 32)", "Speaking Part 2 and 3 (Page 33-34)"),
+    ("Review Listening Mistakes (Page 35)", "Review Reading Mistakes (Page 36)"),
 
-# Generate a list of dates for the plan
-date_range = pd.date_range(start=start_date, end=end_date)
+    # Test 2
+    ("Listening Section 1 (Page 37-38)", "Reading Passage 1 (Page 39-40)"),
+    ("Writing Task 1 (Page 41)", "Reading Passage 2 (Page 42-43)"),
+    ("Listening Section 2 (Page 44-45)", "Speaking Part 1 (Page 46-47)"),
+    ("Listening Section 3 (Page 48-49)", "Reading Passage 3 (Page 50-51)"),
+    ("Mock Listening Test (Page 52-53)", "Mock Reading Test (Page 54-55)"),
+    ("Writing Task 2 (Page 56)", "Speaking Part 2 and 3 (Page 57-58)"),
+    ("Review Listening Mistakes (Page 59)", "Review Reading Mistakes (Page 60)"),
 
-# Define content template
-content = {
-    "Listening": [
-        "Listening Section 1 & 2", "Listening Section 3 & 4",
-        "Review Listening mistakes", "Mock Listening Test"
-    ],
-    "Reading": [
-        "Reading Passage 1", "Reading Passage 2",
-        "Reading Passage 3", "Mock Reading Test"
-    ],
-    "Writing": [
-        "Writing Task 1 (chart/graph)", "Writing Task 2 (essay)",
-        "Review Writing Task 1", "Review Writing Task 2"
-    ],
-    "Speaking": [
-        "Speaking Part 1 Practice", "Speaking Part 2 (Cue Card)",
-        "Speaking Part 3 Discussion", "Mock Speaking Test"
-    ],
-    "Vocabulary & Grammar": [
-        "Vocabulary Review (Morning session)",
-        "Grammar Practice (Afternoon session)"
-    ]
+    # Test 3
+    ("Listening Section 1 (Page 61-62)", "Reading Passage 1 (Page 63-64)"),
+    ("Writing Task 1 (Page 65)", "Reading Passage 2 (Page 66-67)"),
+    ("Listening Section 2 (Page 68-69)", "Speaking Part 1 (Page 70-71)"),
+    ("Listening Section 3 (Page 72-73)", "Reading Passage 3 (Page 74-75)"),
+    ("Mock Listening Test (Page 76-77)", "Mock Reading Test (Page 78-79)"),
+    ("Writing Task 2 (Page 80)", "Speaking Part 2 and 3 (Page 81-82)"),
+    ("Review Listening Mistakes (Page 83)", "Review Reading Mistakes (Page 84)"),
+
+    # Test 4
+    ("Listening Section 1 (Page 85-86)", "Reading Passage 1 (Page 87-88)"),
+    ("Writing Task 1 (Page 89)", "Reading Passage 2 (Page 90-91)"),
+    ("Listening Section 2 (Page 92-93)", "Speaking Part 1 (Review All)")
+]
+
+# Tạo lịch học từ dữ liệu
+corrected_schedule = {
+    "Week Number": [],
+    "Day": [],
+    "Date": [],
+    "Morning Time": [],
+    "Morning Content": [],
+    "Afternoon Time": [],
+    "Afternoon Content": [],
+    "Practice Reference": [],
+    "Goal": []
 }
 
-# Prepare the daily plan data
-daily_plan = []
-week_number = 1
+# Ngày bắt đầu
+start_date = pd.to_datetime("2025-01-23")
+total_days = len(corrected_practices)
 
-for i, current_date in enumerate(date_range):
-    if i % 7 == 0 and i > 0:  # Increment the week number after every 7 days
-        week_number += 1
+# Tạo dữ liệu lịch học
+for day, (morning, afternoon) in enumerate(corrected_practices):
+    date = start_date + pd.Timedelta(days=day)
+    corrected_schedule["Week Number"].append(f"Week {(day // 7) + 1}")
+    corrected_schedule["Day"].append(f"Day {(day % 7) + 1}")
+    corrected_schedule["Date"].append(date.strftime("%Y-%m-%d"))
+    corrected_schedule["Morning Time"].append("7:00-9:00")
+    corrected_schedule["Morning Content"].append(morning)
+    corrected_schedule["Afternoon Time"].append("13:00-14:30")
+    corrected_schedule["Afternoon Content"].append(afternoon)
+    corrected_schedule["Practice Reference"].append(
+        f"{morning.split('(')[1].split(')')[0]}, {afternoon.split('(')[1].split(')')[0]}")
+    corrected_schedule["Goal"].append("Complete tasks and review mistakes")
 
-    # Create the daily schedule
-    schedule = (
-        f"7:00-9:00: {content['Listening'][i % len(content['Listening'])]}, "
-        f"13:00-14:30: {content['Reading'][i % len(content['Reading'])]}"
-    )
+# Chuyển đổi sang DataFrame
+corrected_schedule_df = pd.DataFrame(corrected_schedule)
 
-    # Split schedule into morning and afternoon components
-    parts = schedule.split(", ")
-    morning_part = parts[0]
-    afternoon_part = parts[1]
+# Lưu vào file CSV
+output_file_path = "H:/My Drive/Monthly_Study_Plan_Detailed.csv"
+corrected_schedule_df.to_csv(output_file_path, index=False, encoding="utf-8")
 
-    # Further split into time and content
-    morning_time, morning_content = morning_part.split(": ", 1)
-    afternoon_time, afternoon_content = afternoon_part.split(": ", 1)
+print(f"Lịch học đã được lưu vào file: {output_file_path}")
 
-    # Append structured data to the plan
-    plan = {
-        "Week Number": f"Week {week_number}",
-        "Day": f"Day {i % 7 + 1}",
-        "Date": current_date.strftime("%Y-%m-%d"),
-        "Morning Time": morning_time,
-        "Morning Content": morning_content,
-        "Afternoon Time": afternoon_time,
-        "Afternoon Content": afternoon_content,
-        "Goal": "Focus on improving skills systematically based on the IELTS test sections.",
-        "Result (To Fill)": ""
-    }
-    daily_plan.append(plan)
 
-# Convert the plan into a DataFrame
-df_monthly_plan = pd.DataFrame(daily_plan)
 
-# Save to Excel
-file_path_monthly = "H:/My Drive/Monthly_Study_Plan_Detailed.xlsx"  # Change this path as needed
-df_monthly_plan.to_excel(file_path_monthly, index=False, sheet_name="Study Plan", engine="openpyxl")
 
-print(f"File đã được xuất thành công tại: {file_path_monthly}")
